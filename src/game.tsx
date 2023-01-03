@@ -220,7 +220,7 @@ createRoot(document.getElementById("game")).render(
       position: [0, 0, 5],
     }}
   >
-    <OrbitControls />
+    {/* <OrbitControls /> */}
     <Backdrop
       receiveShadow={false}
       castShadow={false}
