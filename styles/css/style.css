@@ -1,8 +1,9 @@
-body{
-    color:#abb2bf 
+body {
+  color: #abb2bf;
+  margin: 0;
 }
 
 #game {
-    width: 100vw;
-    height: 100vh;
+  width: 100vw;
+  height: 100vh;
 }
