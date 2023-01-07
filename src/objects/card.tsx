@@ -4,6 +4,7 @@ import { motion } from "framer-motion-3d";
 import { MotionProps } from "framer-motion";
 import { Text, CatmullRomLine, Svg } from "@react-three/drei";
 import { Card } from "../types/card";
+import "../materials/gradient";
 
 export const CARD_WIDTH = 1;
 export const CARD_HEIGHT = 1.5;
@@ -67,30 +68,6 @@ type Props = MotionProps & {
   card: Card;
   [x: string]: any;
 };
-
-// Create material
-const uniforms = {
-  color1: {
-    value: new THREE.Color(0xffffff),
-  },
-  color2: {
-    value: new THREE.Color(0x000000),
-  },
-};
-const vertexShader = `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-  }
-  `;
-const fragmentShader = `
-  uniform vec3 color1;
-  uniform vec3 color2;
-  varying vec2 vUv;
-  void main() {
-    gl_FragColor = vec4(mix(color1, color2, vUv.y),1.0);
-  }`;
 
 export function CardContainer({ card, ...rest }: Props) {
   const color = card.color();
@@ -156,11 +133,7 @@ export function CardContainer({ card, ...rest }: Props) {
         position={[0, 0, 0.001]}
         rotation={[0, THREE.MathUtils.degToRad(180), 0]}
       >
-        <shaderMaterial
-          uniforms={uniforms}
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-        />
+        <gradientMaterial color1="blue" color2="red" />
       </mesh>
       <Text
         position={[0, 0.45, 0.002]}
