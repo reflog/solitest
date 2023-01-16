@@ -4,21 +4,20 @@
   "description": "Parcel-Boilerplate for Phaser 3 in TypeScript",
   "keywords": [],
   "devDependencies": {
-    "@react-three/editor": "^0.0.16",
-    "@types/react": "^18.0.26",
-    "@types/react-dom": "^18.0.10",
+    "@types/animejs": "^3.1.6",
+    "@types/three": "^0.146.0",
     "typescript": "4.9.4",
     "vite": "^4.0.3"
   },
   "dependencies": {
-    "@react-three/fiber": "^8.9.1",
-    "@react-three/flex": "^1.0.1",
-    "@types/three": "^0.146.0",
-    "framer-motion-3d": "^8.0.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-spring": "^9.6.1",
-    "three": "^0.148.0"
+    "@theatre/core": "0.5",
+    "@theatre/studio": "0.5",
+    "animejs": "^3.2.1",
+    "lil-gui": "^0.17.0",
+    "three": "^0.148.0",
+    "three-inspect": "^0.2.4",
+    "three-stdlib": "^2.21.5",
+    "troika-three-text": "^0.47.1"
   },
   "scripts": {
     "dev": "vite"

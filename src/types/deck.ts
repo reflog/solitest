@@ -1,8 +1,9 @@
+import { EventDispatcher } from "three";
 import { Card } from "./card";
 import { Rank } from "./rank";
 import { Suit } from "./suit";
 
-export class Deck {
+export class Deck extends EventDispatcher {
   clone(): Deck {
     const d = new Deck();
     d.cards = this.cards;
@@ -42,12 +43,16 @@ export class Deck {
     }
     this.cards = this.shuffle();
   }
+
   empty() {
     return this.cards.length === 0;
   }
+
   draw() {
     if (!this.empty()) {
-      return this.cards.pop();
+      const t = this.cards.pop();
+      this.dispatchEvent({ type: "changed" });
+      return t;
     }
   }
 
@@ -66,13 +71,17 @@ export class Deck {
       }
       i++;
     }
+    this.dispatchEvent({ type: "changed" });
     return d;
   }
 
   add(c: Card) {
     this.cards.push(c);
+    this.dispatchEvent({ type: "changed" });
   }
+
   prepend(c: Card) {
     this.cards.unshift(c);
+    this.dispatchEvent({ type: "changed" });
   }
 }
