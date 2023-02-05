@@ -6,7 +6,7 @@ import { Card } from "../types/card";
 import { Suit } from "../types/suit";
 import { Rank, ranksFit } from "../types/rank";
 import { type Game } from "../game";
-import { Heart } from "../objects/Heart";
+import { Heart } from "../objects/heart";
 import anime from "animejs";
 export class CardFightScene extends THREE.Group {
   counts = {
@@ -82,10 +82,6 @@ export class CardFightScene extends THREE.Group {
     if (ranksFit(c.card.rank, this.grave.top.rank)) {
       const c = d.deck.draw();
       this.grave.add(c);
-      // counts[c.suit]++;
-      // setCounts({ ...counts });
-      // setGraveCards(graveCards.clone());
-      // setter(d.clone());
     }
   }
   buildScene() {
@@ -123,69 +119,5 @@ export class CardFightScene extends THREE.Group {
       new DeckContainer(this.game, this.grave, "grave", () => {}, [0.6, -2, 0]),
       new Heart()
     );
-    //   return (
-    // <SheetProvider sheet={demoSheet}>
-    //   <group name="g">
-    //     {/* {travelingCard && (
-    //       <motion.group initial={initialPos} animate={controls}>
-    //         <CardContainer card={travelingCard} />
-    //       </motion.group>
-    //     )} */}
-
-    //     <DeckContainer
-    //       name="deck"
-    //       onDeckTap={grabCard}
-    //       deck={deckCards}
-    //       flipped
-    //       position={[-0.6, -2, 0]}
-    //     />
-    //     <DeckContainer
-    //       name="grave"
-    //       onDeckTap={playCard}
-    //       deck={graveCards}
-    //       position={[0.6, -2, 0]}
-    //     />
-    //     <Html transform pointerEvents="none" position={[2.5, -2, -1.3]}>
-    //       <Suits counts={counts} />
-    //     </Html>
-    //     <Heart />
-    //   </group>
-    // </SheetProvider>
   }
-
-  // }, [deckCards]);
-  // useEffect(() => {
-  //   if (travelingCard) {
-  //     // controls.start(targetPos, { duration: 1, ease: "easeInOut" }).then(() => {
-  //     //   travelingCard.open = true;
-  //     //   graveCards.add(travelingCard);
-  //     //   setGraveCards(graveCards.clone());
-  //     //   setTravelingCard(undefined);
-  //     // });
-  //   }
-  // }, [travelingCard]);
-
-  // const grabCard = () => {
-  //   if (travelingCard) return;
-  //   const c = deckCards.draw();
-  // };
-
-  // const playCard = () => {
-  //   graveCards.draw();
-  //   setGraveCards(graveCards.clone());
-  // };
-
-  // const onPileCardTap = (
-  //   d: Deck,
-  //   setter: React.Dispatch<React.SetStateAction<Deck>>
-  // ) => {
-  //   // if (ranksFit(d.top.rank, graveCards.top.rank)) {
-  //   //   const c = d.draw();
-  //   //   graveCards.add(c);
-  //   //   counts[c.suit]++;
-  //   //   setCounts({ ...counts });
-  //   //   setGraveCards(graveCards.clone());
-  //   //   setter(d.clone());
-  //   // }
-  // };
 }

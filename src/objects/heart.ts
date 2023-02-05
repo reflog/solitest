@@ -42,7 +42,7 @@ export class Heart extends THREE.Group {
   update() {
     this.text.text = `${this._current}/${this._total}`;
     this.text.sync();
-    this.mat.uniforms.t.value = lerp(-1, 1, this._current / this._total);
+    this.mat.uniforms.t.value = lerp(0, 1, this._current / this._total);
   }
 
   public set total(v: number) {
@@ -58,7 +58,7 @@ export class Heart extends THREE.Group {
   constructor() {
     super();
 
-    this.mat = RangeMaterial(new Color("red"), 1);
+    this.mat = RangeMaterial(new Color("red"), 0.0);
     const m = new THREE.Mesh(heartGeometry, this.mat);
     this.text = prepareText("10/10", 0.2);
     this.text.position.set(0.08, -0.1, 1.0);
@@ -70,5 +70,6 @@ export class Heart extends THREE.Group {
     this.add(m);
     this.add(new THREE.BoxHelper(m, 0x00ff00));
     this.add(this.text);
+    this.update();
   }
 }
