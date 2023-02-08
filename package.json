@@ -17,7 +17,8 @@
     "three": "^0.148.0",
     "three-inspect": "^0.2.4",
     "three-stdlib": "^2.21.5",
-    "troika-three-text": "^0.47.1"
+    "troika-three-text": "^0.47.1",
+    "tweakpane": "^3.1.4"
   },
   "scripts": {
     "dev": "vite"

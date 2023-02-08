@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { Card } from "../types/card";
-import { GradientMaterial } from "../materials/gradient";
 import { type Game } from "../game";
+import { GradientMaterial } from "../materials/gradient";
+import { Card } from "../types/card";
 import { createCatmulRomLine } from "./catmulRomLine";
 // @ts-ignore
 import { Text } from "troika-three-text";
 
-import GUI from "lil-gui";
+import { GLTFLoader } from "three-stdlib";
 export const CARD_WIDTH = 1;
 export const CARD_HEIGHT = 1.5;
 export const CARD_PADDING = 0.1;
@@ -91,6 +91,17 @@ function prepareText(text: string, size: number) {
 export class CardContainer extends THREE.Group {
   constructor(public game: Game, public card: Card) {
     super();
+  const loader = new GLTFLoader();
+    loader.load("/assets/untitled.glb", (m) => {
+      m.scene.name = "gltf" + this.name;
+      const front = m.scene.children[0].children[0] as THREE.Mesh;
+      const side = m.scene.children[0].children[1] as THREE.Mesh;
+      const back = m.scene.children[0].children[2] as THREE.Mesh;
+      front.name = "front"
+      side.name = "side"
+      back.name = "back"
+      // this.add(m.scene);
+    });
 
     this.name = card.string();
     this.rotateY(!card.open ? THREE.MathUtils.degToRad(180) : 0);

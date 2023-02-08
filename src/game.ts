@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import {
   AmbientLight,
   Clock,
@@ -7,15 +8,14 @@ import {
   PerspectiveCamera,
   PointLight,
   Scene,
-  WebGLRenderer,
+  WebGLRenderer
 } from "three";
-import * as THREE from "three";
+import Inspector from "three-inspect";
 import { Font } from "three-stdlib";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { PickHelper } from "./helpers/pick";
 import { resizeRendererToDisplaySize } from "./helpers/responsiveness";
-import { CardFightScene } from "./scenes/cardFight";
-import Inspector from "three-inspect";
+import { CardTestScene } from "./scenes/cardTest";
 
 const CANVAS_ID = "scene";
 
@@ -31,6 +31,7 @@ export class Game {
   clock: Clock;
   cardFont: Font;
   pickHelper: PickHelper;
+  inspector: Inspector;
 
   // const animation = { enabled: false, play: true };
 
@@ -52,15 +53,18 @@ export class Game {
     this.setupControls();
 
     this.scene.background = new Color("grey");
-    //   this.scene.add(new CardTestScene(this));
-    this.scene.add(new CardFightScene(this));
     this.pickHelper = new PickHelper(this.scene, this.camera, this.canvas);
-    const inspector = new Inspector(
+    this.inspector = new Inspector(
       THREE /* the THREE object used in your project */,
       this.scene,
       this.camera,
       this.renderer
     );
+
+
+          this.scene.add(new CardTestScene(this));
+    // this.scene.add(new CardFightScene(this));
+
   }
 
   setupCamera() {
