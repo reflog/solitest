@@ -1,40 +1,62 @@
+import anime from "animejs";
 import * as THREE from "three";
-import { CardContainer } from "./card";
-import { Deck } from "../types/deck";
-import { Card } from "../types/card";
+import { MathUtils } from "three";
+import { GLTFLoader } from "three-stdlib";
 import { type Game } from "../game";
-import { MeshBasicMaterial } from "three";
-import GUI from "lil-gui";
+import { Deck } from "../types/deck";
+import { CardContainer } from "./card";
+const tl = new THREE.TextureLoader();
+const sideTexture = tl.load('/assets/textures/stack_side.png');
+const sideMat = new THREE.MeshStandardMaterial({ map: sideTexture, name: 'sidemat' });
+const cardBack1Texture = tl.load('/assets/textures/card_back_1.png');
+cardBack1Texture.flipY = false;
+const cardBack1Mat = new THREE.MeshStandardMaterial({ map: cardBack1Texture, name: 'card_back_1' });
 
 export class DeckContainer extends THREE.Group {
-  guiFolder: GUI;
+  meshGroup: THREE.Group;
   constructor(
     protected game: Game,
     public deck: Deck,
-    name: string,
-    onDeckTap: (d: DeckContainer, c: CardContainer) => void,
+    public name: string,
+    onDeckTap: (d: DeckContainer) => void,
     position: [x: number, y: number, z: number]
   ) {
     super();
     this.name = name;
     this.position.set(...position);
-    const hitTest = new THREE.Mesh(
-      new THREE.PlaneGeometry(1, 1.45),
-      new MeshBasicMaterial({ visible: false })
-    );
-    hitTest.userData.interactive = true;
-    hitTest.position.set(0, 0.2, 0.1);
-    hitTest.addEventListener("clicked", (e) => {
-      if (!deck.empty()) onDeckTap(this, this.topCardContainer());
-    });
-    this.add(hitTest);
-    this.setup();
+    const loader = new GLTFLoader();
     this.deck.addEventListener("changed", () => this.deckChanged());
-    this.rotateX(THREE.MathUtils.degToRad(-45));
-  }
 
-  topCardContainer() {
-    return this.getObjectByName(this.deck.top.string()) as CardContainer;
+    loader.load("/assets/models/stack.glb", (gltf) => {
+      this.add(gltf.scene);
+
+      const g1 = gltf.scene.children[0] as THREE.Group;
+      const frontMesh = g1.children[0] as THREE.Mesh;
+      frontMesh.material = cardBack1Mat;
+      const sideMesh = g1.children[1] as THREE.Mesh;
+      sideMesh.material = sideMat;
+      g1.rotateX(THREE.MathUtils.degToRad(45));
+
+      frontMesh.userData.interactive = true;
+      frontMesh.addEventListener("clicked", (e) => {
+        onDeckTap(this);
+      });
+
+      this.meshGroup = g1;
+
+      this.setup();
+    });
+  }
+  setup() {
+    const yscale = MathUtils.lerp(0, 0.5, this.deck.cards.length / 54);
+    this.meshGroup.scale.set(0.5, yscale, 0.5)
+    if (!this.deck.empty() && this.deck.top.open) {
+      const cc = new CardContainer(this.game, this.deck.top);
+      cc.scale.setScalar(0.5)
+      cc.position.setZ(yscale)
+      cc.rotateX(THREE.MathUtils.degToRad(- 45));
+      this.add(cc);
+    }
   }
 
   deckChanged() {
@@ -44,30 +66,52 @@ export class DeckContainer extends THREE.Group {
     this.setup();
   }
 
-  protected setup() {
-    [...this.deck.cards].reverse().map((c: Card, i) => {
-      const cc = new CardContainer(this.game, c);
-      cc.position.z = -i * 0.005;
-      this.add(cc);
+  moveTopCardTo(position: [x: number, y: number, z: number]): Promise<CardContainer> {
+    if (anime.running.length > 0) return Promise.resolve(null);
+
+    const tmp = this.deck.top.clone();
+    console.log("moving", tmp.string())
+    const c = new CardContainer(this.game, tmp);
+    c.scale.setScalar(0.5)
+    c.rotateX(THREE.MathUtils.degToRad(- 45));
+    c.position.setZ(0.3)
+    this.add(c);
+
+
+
+    anime({
+      targets: c.position,
+      z: 0.3,
+      duration: 1000,
     });
-  }
-}
-export class PileContainer extends DeckContainer {
-  constructor(
-    game: Game,
-    deck: Deck,
-    name: string,
-    onDeckTap: (d: DeckContainer, c: CardContainer) => void,
-    position: [x: number, y: number, z: number]
-  ) {
-    super(game, deck, name, onDeckTap, position);
-    this.rotateX(THREE.MathUtils.degToRad(45));
-  }
-  protected setup(): void {
-    [...this.deck.cards].map((c: Card, i) => {
-      const cc = new CardContainer(this.game, c);
-      cc.position.set(0, -i * 0.1, i * 0.005);
-      this.add(cc);
+    return anime({
+      targets: c.rotation,
+      easing: "easeInOutSine",
+      keyframes: [
+        { y: THREE.MathUtils.degToRad(5) },
+        { y: THREE.MathUtils.degToRad(-5) },
+      ],
+      duration: 300,
+      loop: 2,
+      direction: "alternate",
+    }).finished.then(() => {
+      anime({
+        targets: c.position,
+        x: 1.2,
+        z: position[2],
+        duration: 1000,
+      });
+
+      return anime({
+        targets: c.rotation,
+        easing: "linear",
+        y: THREE.MathUtils.degToRad(-180),
+        duration: 100,
+      }).finished.then(() => {
+        return c;
+      });
     });
+
   }
+
 }

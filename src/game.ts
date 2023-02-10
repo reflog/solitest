@@ -15,7 +15,7 @@ import { Font } from "three-stdlib";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { PickHelper } from "./helpers/pick";
 import { resizeRendererToDisplaySize } from "./helpers/responsiveness";
-import { CardTestScene } from "./scenes/cardTest";
+import { CardFightScene } from "./scenes/cardFight";
 
 const CANVAS_ID = "scene";
 
@@ -62,8 +62,8 @@ export class Game {
     );
 
 
-          this.scene.add(new CardTestScene(this));
-    // this.scene.add(new CardFightScene(this));
+    // this.scene.add(new CardTestScene(this));
+    this.scene.add(new CardFightScene(this));
 
   }
 

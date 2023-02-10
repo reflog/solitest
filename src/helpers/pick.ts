@@ -1,4 +1,4 @@
-import { Camera, EventDispatcher, Raycaster, Scene, Vector3 } from "three";
+import { Camera, EventDispatcher, Raycaster, Scene } from "three";
 
 export class PickHelper extends EventDispatcher {
   raycaster: THREE.Raycaster;
@@ -62,6 +62,7 @@ export class PickHelper extends EventDispatcher {
         o.dispatchEvent({
           type: "clicked",
         });
+        break;
       }
     }
   }
