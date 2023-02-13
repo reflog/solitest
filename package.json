@@ -5,15 +5,17 @@
   "keywords": [],
   "devDependencies": {
     "@types/animejs": "^3.1.6",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.10",
     "@types/three": "^0.146.0",
+    "@vitejs/plugin-react": "3.1.0",
     "typescript": "4.9.4",
     "vite": "^4.0.3"
   },
   "dependencies": {
-    "@theatre/core": "0.5",
-    "@theatre/studio": "0.5",
     "animejs": "^3.2.1",
-    "lil-gui": "^0.17.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "three": "^0.148.0",
     "three-inspect": "^0.2.4",
     "three-stdlib": "^2.21.5",

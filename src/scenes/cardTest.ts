@@ -17,7 +17,7 @@ import { DeckContainer } from "../objects/deck";
 export class CardTestScene extends THREE.Group {
   constructor(public game: Game) {
     super();
-    const d = new DeckContainer(game, "test", () => { }, [0, 0, 0]);
+    const d = new DeckContainer(game, null, "test", () => { }, [0, 0, 0]);
     this.add(d)
     // const c1 = new CardContainer(game, new Card(Suit.CLUB, Rank.EIGHT, true));
     // const c2 = new CardContainer(game, new Card(Suit.SPADE, Rank.JACK, false));

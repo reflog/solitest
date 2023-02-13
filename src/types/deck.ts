@@ -6,7 +6,7 @@ import { Suit } from "./suit";
 export class Deck extends EventDispatcher {
   clone(): Deck {
     const d = new Deck();
-    d.cards = this.cards;
+    d.cards = [...this.cards];
     return d;
   }
   cards: Card[] = [];

@@ -57,12 +57,17 @@ export class PickHelper extends EventDispatcher {
       .filter((x) => x.object.visible);
 
     for (const i of intersectedObjects) {
-      const o = i.object;
-      if (o.userData.interactive) {
-        o.dispatchEvent({
-          type: "clicked",
-        });
-        break;
+      let o = i.object;
+      while (o && !o.userData.interactive) {
+        o = o.parent;
+      }
+      if (o) {
+        if (o.userData.interactive) {
+          o.dispatchEvent({
+            type: "clicked",
+          });
+          break;
+        }
       }
     }
   }

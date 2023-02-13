@@ -4,10 +4,9 @@ uniform vec2 resolution;
 varying vec3 vUv;
 
 void main() {
-  vec2 uv = vUv.xy / 80.0;
-  if(1.0 - uv.y < t) {
-    gl_FragColor = vec4(color, 1.0);
-  } else {
+  if(vUv.z < t*-1.0) {
     gl_FragColor = vec4(1, 1, 0, 1);
+  } else {
+    gl_FragColor = vec4(color, 1.0);
   }
 }

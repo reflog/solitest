@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import {
   AmbientLight,
   Clock,
@@ -8,7 +7,7 @@ import {
   PerspectiveCamera,
   PointLight,
   Scene,
-  WebGLRenderer
+  WebGLRenderer,
 } from "three";
 import Inspector from "three-inspect";
 import { Font } from "three-stdlib";
@@ -20,7 +19,6 @@ import { CardFightScene } from "./scenes/cardFight";
 const CANVAS_ID = "scene";
 
 export class Game {
-  canvas: HTMLCanvasElement;
   renderer: WebGLRenderer;
   scene: Scene;
   loadingManager: LoadingManager;
@@ -35,8 +33,7 @@ export class Game {
 
   // const animation = { enabled: false, play: true };
 
-  constructor() {
-    this.canvas = document.querySelector(`canvas#${CANVAS_ID}`)!;
+  constructor(private canvas: HTMLCanvasElement) {
     this.renderer = new WebGLRenderer({
       canvas: this.canvas,
       antialias: true,
@@ -45,6 +42,9 @@ export class Game {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = PCFSoftShadowMap;
+    // this.renderer.outputEncoding = THREE.sRGBEncoding;
+    // this.renderer.physicallyCorrectLights = true;
+
     this.scene = new Scene();
     this.setupLoadingManager();
     this.setupLights();
@@ -54,17 +54,15 @@ export class Game {
 
     this.scene.background = new Color("grey");
     this.pickHelper = new PickHelper(this.scene, this.camera, this.canvas);
-    this.inspector = new Inspector(
-      THREE /* the THREE object used in your project */,
-      this.scene,
-      this.camera,
-      this.renderer
-    );
-
+    // this.inspector = new Inspector(
+    //   THREE /* the THREE object used in your project */,
+    //   this.scene,
+    //   this.camera,
+    //   this.renderer
+    // );
 
     // this.scene.add(new CardTestScene(this));
     this.scene.add(new CardFightScene(this));
-
   }
 
   setupCamera() {
@@ -77,7 +75,7 @@ export class Game {
     this.camera.position.set(0, 0, 7);
   }
   animate() {
-    requestAnimationFrame(() => this.animate());
+    // requestAnimationFrame(() => this.animate());
 
     if (resizeRendererToDisplaySize(this.renderer)) {
       const canvas = this.renderer.domElement;
@@ -140,6 +138,7 @@ export class Game {
     };
   }
 }
-
-const game = new Game();
-game.animate();
+export async function main(canvas: HTMLCanvasElement) {
+  const game = new Game(canvas);
+  return { render: () => game.animate(), cleanup: () => {} };
+}

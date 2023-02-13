@@ -1,25 +1,9 @@
-import anime from "animejs";
 import * as THREE from "three";
-import { Color } from "three";
+import { GLTFLoader } from "three-stdlib";
 import { lerp } from "three/src/math/MathUtils";
 // @ts-ignore
 import { Text } from "troika-three-text";
-import { RangeMaterial } from "../materials/range";
-
-function buildHeart() {
-  const x = 0,
-    y = 0;
-  const heartShape = new THREE.Shape()
-    .moveTo(x + 25, y + 25)
-    .bezierCurveTo(x + 25, y + 25, x + 20, y, x, y)
-    .bezierCurveTo(x - 30, y, x - 30, y + 35, x - 30, y + 35)
-    .bezierCurveTo(x - 30, y + 55, x - 10, y + 77, x + 25, y + 95)
-    .bezierCurveTo(x + 60, y + 77, x + 80, y + 55, x + 80, y + 35)
-    .bezierCurveTo(x + 80, y + 35, x + 80, y, x + 50, y)
-    .bezierCurveTo(x + 35, y, x + 25, y + 25, x + 25, y + 25);
-  return new THREE.ShapeGeometry(heartShape);
-}
-export const heartGeometry = buildHeart();
+import { Game } from "../game";
 
 function prepareText(text: string, size: number): any {
   const t = new Text();
@@ -35,14 +19,15 @@ function prepareText(text: string, size: number): any {
 }
 
 export class Heart extends THREE.Group {
-  mat: THREE.ShaderMaterial;
+  mat: THREE.MeshStandardMaterial;
   text: any;
-  _current = 10;
-  _total = 10;
+  _current = 0;
+  _total = 100;
   update() {
     this.text.text = `${this._current}/${this._total}`;
     this.text.sync();
-    this.mat.uniforms.t.value = lerp(0, 1, this._current / this._total);
+    this.mat.opacity = lerp(-0.5, 0.5, this._current / this._total);
+    this.mat.needsUpdate = true;
   }
 
   public set total(v: number) {
@@ -55,21 +40,44 @@ export class Heart extends THREE.Group {
     this.update();
   }
 
-  constructor() {
+  constructor(private game: Game) {
     super();
 
-    this.mat = RangeMaterial(new Color("red"), 0.0);
-    const m = new THREE.Mesh(heartGeometry, this.mat);
+    const loader = new GLTFLoader();
+    let mm: THREE.MeshStandardMaterial;
+    loader.load("/assets/models/heart.glb", (gltf) => {
+      const m = gltf.scene.children[0] as THREE.Mesh;
+
+      this.mat = m.material as THREE.MeshStandardMaterial;
+      this.mat.transparent = true;
+      this.mat.side = THREE.FrontSide;
+      this.mat.onBeforeCompile = (shader, renderer) => {
+        shader.vertexShader = shader.vertexShader.replace(
+          "varying vec3 vViewPosition;",
+          "varying vec3 vViewPosition;\nvarying vec3 vUv;"
+        );
+        shader.vertexShader = shader.vertexShader.replace(
+          "}",
+          "\nvUv = position;}"
+        );
+
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "varying vec3 vViewPosition;",
+          "varying vec3 vViewPosition;\nvarying vec3 vUv;"
+        );
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "vec4 diffuseColor = vec4( diffuse, opacity );",
+          `vec4 diffuseColor = vec4( diffuse, vUv.z < -1.0*opacity ? 0.5 : 1.0 );`
+        );
+      };
+      this.add(m);
+      this.update();
+    });
     this.text = prepareText("10/10", 0.2);
-    this.text.position.set(0.08, -0.1, 1.0);
+    this.text.position.set(0.1, 0.1, 0.3);
 
     this.name = "heart";
-    m.scale.setScalar(0.008);
-    m.rotateZ(THREE.MathUtils.degToRad(180));
-    this.position.set(-1.6, -1.4, 0);
-    this.add(m);
-    this.add(new THREE.BoxHelper(m, 0x00ff00));
+    this.position.set(-2.5, -2, 0);
     this.add(this.text);
-    this.update();
   }
 }
